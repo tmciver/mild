@@ -1,6 +1,12 @@
 module Main where
 
-import Lib
+import System.Environment
+import Graphics.HsExif
 
 main :: IO ()
-main = someFunc
+main = do
+  args <- getArgs
+  let filePath = head args
+  eitherExif <- parseFileExif filePath
+  putStrLn (show eitherExif)
+  return ()
