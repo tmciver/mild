@@ -41,6 +41,8 @@ packages:
 #
 extra-deps:
 - hsexif-0.6.1.6
+- rdf4h-3.1.1
+- hgal-2.0.0.2@sha256:13d58afd0668b9cb881c612eff8488a0e289edd4bbffa893df4beee60cfeb73b,653
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

@@ -11,6 +11,20 @@ packages:
       sha256: 6b288fa18a4060704bdd069586595708d55a803032f6b2f1a27191446e2c6df8
   original:
     hackage: hsexif-0.6.1.6
+- completed:
+    hackage: rdf4h-3.1.1@sha256:8a9d266a071467040f0acc9b9d95657595048bb32a0111a495badec2f27358c8,4091
+    pantry-tree:
+      size: 2180
+      sha256: e31e2ce95d5e55d54c2182e35c2a09ac68eced7547533ca53e86027bb0d8dd33
+  original:
+    hackage: rdf4h-3.1.1
+- completed:
+    hackage: hgal-2.0.0.2@sha256:13d58afd0668b9cb881c612eff8488a0e289edd4bbffa893df4beee60cfeb73b,653
+    pantry-tree:
+      size: 412
+      sha256: 265739e0c2c1313b96f8653b0bdb24cd5cc895e53d9afc940a34ab125c67e60e
+  original:
+    hackage: hgal-2.0.0.2@sha256:13d58afd0668b9cb881c612eff8488a0e289edd4bbffa893df4beee60cfeb73b,653
 snapshots:
 - completed:
     size: 523454
