@@ -24,6 +24,8 @@ dependencies:
 - hsexif
 - rdf4h
 - containers
+- text
+- errors
 
 library:
   source-dirs: src
