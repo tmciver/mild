@@ -3,14 +3,16 @@
 module Main where
 
 import Control.Error.Util (note)
+import Control.Monad.Catch (MonadThrow, throwM, Exception)
+import Data.Bifunctor (first)
 import Data.Coerce
 import Data.List (intercalate)
 import Data.Map as Map
-import Prelude as P
 import Data.RDF
 import Data.Set as Set
 import qualified Data.Text as T
 import Graphics.HsExif
+import Prelude as P
 import System.Environment
 
 newtype ExifData = ExifData (Map.Map ExifTag ExifValue)
@@ -27,11 +29,16 @@ schemaPrefix = "http://schema.org/"
 mkPrefixedNode :: T.Text -> T.Text -> Node
 mkPrefixedNode prefix term = (unode (T.concat [prefix, term]))
 
+data ExifError = TagDescriptionNotFound ExifTag
+instance Show ExifError where
+  show (TagDescriptionNotFound tag) = "Could not find description for tag " <> show tag
+instance Exception ExifError
+
 -- |Attempts to convert the given EXIF data value to an RDF graph.
 -- Returns a tuple of the root node (blank) and the graph.
-exifTagToGraph :: Rdf a => (ExifTag, ExifValue) -> Maybe (Node, RDF a)
+exifTagToGraph :: (Rdf a, MonadThrow m) => (ExifTag, ExifValue) -> m (Node, RDF a)
 exifTagToGraph (tag, val) = do
-  desc <- tagDesc tag
+  desc <- exifTagDesc tag
   let bn = bnode $ T.pack desc
       pm = PrefixMappings mempty
       nameNode = lnode (plainL (T.pack desc))
@@ -41,14 +48,19 @@ exifTagToGraph (tag, val) = do
                 , triple bn (mkPrefixedNode schemaPrefix "value") valueNode
                 ]
       graph = mkRdf triples Nothing pm
-  Just (bn, graph)
+  pure (bn, graph)
+
+  where exifTagDesc :: MonadThrow m => ExifTag -> m String
+        exifTagDesc tag = case tagDesc tag of
+          Nothing -> throwM (TagDescriptionNotFound tag)
+          Just desc -> pure desc
 
 -- |Returns a graph of the the given 'ExifData' data attached to the given image
 -- node by the `additionalProperty` predicate.
-exifDataToGraph :: Rdf a
+exifDataToGraph :: (Rdf a, MonadThrow m)
                 => Node          -- node for an image.
                 -> ExifData      -- EXIF data
-                -> Maybe (RDF a)
+                -> m (RDF a)
 exifDataToGraph imageNode (ExifData ed) = graph
   where maybeExifProps = traverse exifTagToGraph (Map.toList ed)
         g :: Rdf a => Node -> (Node, RDF a) -> RDF a -> RDF a
@@ -84,7 +96,8 @@ main = do
       eitherGraph :: Either String (RDF TList)
       eitherGraph = do
         exifData <- eitherExifData
-        note "Could not create graph from EXIF data." (exifDataToGraph imageNode exifData)
+        first show (exifDataToGraph imageNode exifData)
+        --note "Could not create graph from EXIF data." (exifDataToGraph imageNode exifData)
   case eitherGraph of
     Left e -> putStrLn $ show e
     Right graph -> print $ showGraph graph

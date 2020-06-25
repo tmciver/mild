@@ -26,6 +26,7 @@ dependencies:
 - containers
 - text
 - errors
+- exceptions
 
 library:
   source-dirs: src
