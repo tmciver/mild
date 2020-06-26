@@ -102,12 +102,9 @@ main = do
       eitherGraph = do
         exifData <- eitherExifData
         first show (exifDataToGraph imageNode exifData)
-        --note "Could not create graph from EXIF data." (exifDataToGraph imageNode exifData)
   case eitherGraph of
     Left e -> putStrLn $ show e
-    Right graph -> print $ showGraph graph
-    
-  --let eitherTags = Map.keys <$> eitherExif
-  --putStrLn (show eitherTags)
-      --putStrLn (show eitherExifData)
-  return ()
+    Right graph -> let mappings = PrefixMappings $ Map.fromList [("schema", "http://schema.org/")]
+                       docUrl = T.concat ["localhost:3000/images/123"]
+                       serializer = TurtleSerializer (Just docUrl) mappings
+                   in writeRdf serializer graph
