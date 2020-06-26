@@ -2,6 +2,7 @@
 
 module Main where
 
+import Data.Maybe (catMaybes)
 import Control.Error.Util (note)
 import Control.Monad.Catch (MonadThrow, throwM, Exception)
 import Data.Bifunctor (first)
@@ -30,8 +31,10 @@ mkPrefixedNode :: T.Text -> T.Text -> Node
 mkPrefixedNode prefix term = (unode (T.concat [prefix, term]))
 
 data ExifError = TagDescriptionNotFound ExifTag
+               | NoExifDataFound
 instance Show ExifError where
   show (TagDescriptionNotFound tag) = "Could not find description for tag " <> show tag
+  show NoExifDataFound = "No EXIF data found."
 instance Exception ExifError
 
 -- |Attempts to convert the given EXIF data value to an RDF graph.
@@ -62,7 +65,7 @@ exifDataToGraph :: (Rdf a, MonadThrow m)
                 -> ExifData      -- EXIF data
                 -> m (RDF a)
 exifDataToGraph imageNode (ExifData ed) = graph
-  where maybeExifProps = traverse exifTagToGraph (Map.toList ed)
+  where exifProps = catMaybes $ exifTagToGraph <$> (Map.toList ed)
         g :: Rdf a => Node -> (Node, RDF a) -> RDF a -> RDF a
         g imageNode (n, propGraph) imageGraph = let triples = (triplesOf imageGraph) <> (triplesOf propGraph) <> [triple imageNode (mkPrefixedNode schemaPrefix "hasProperty") n]
                                                     baseUrl' = baseUrl imageGraph
@@ -70,7 +73,9 @@ exifDataToGraph imageNode (ExifData ed) = graph
                                                 in mkRdf triples baseUrl' pm
         f :: Rdf a => Node -> [(Node, RDF a)] -> RDF a
         f imageNode propGraphs = P.foldr (g imageNode) Data.RDF.empty propGraphs
-        graph = (f imageNode) <$> maybeExifProps
+        graph = case exifProps of
+          [] -> throwM NoExifDataFound
+          exif -> pure $ f imageNode exifProps
 
 -- |Adds the EXIF data as properties of the given (blank) node.
 -- exifToRdf :: Rdf r => ExifData -> Node -> Maybe (RDF r)
