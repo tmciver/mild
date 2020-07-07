@@ -5,29 +5,26 @@
 
 packages:
 - completed:
-    hackage: hsexif-0.6.1.6@sha256:8972d2c8f81734c3acd1a269f74b153a865b1898c58eed561cb74cd0ab7eecb5,2287
+    hackage: hsexif-0.6.1.8@sha256:8c213fc9a6ab0c959e68e5be736b19cb157739f784e24d63a0824dfb02687d76,2275
     pantry-tree:
-      size: 972
-      sha256: 6b288fa18a4060704bdd069586595708d55a803032f6b2f1a27191446e2c6df8
+      size: 1120
+      sha256: 0ce5093c9d5e41218e6fc01efe068213e6b297f27e1abbafc9918f82b660b864
   original:
-    hackage: hsexif-0.6.1.6
+    hackage: hsexif-0.6.1.8
 - completed:
-    hackage: rdf4h-3.1.1@sha256:8a9d266a071467040f0acc9b9d95657595048bb32a0111a495badec2f27358c8,4091
+    name: rdf4h
+    version: 4.0.1
+    git: https://github.com/robstewart57/rdf4h.git
     pantry-tree:
-      size: 2180
-      sha256: e31e2ce95d5e55d54c2182e35c2a09ac68eced7547533ca53e86027bb0d8dd33
+      size: 324204
+      sha256: 8f7219f0ff96e0781ad195cfb60e1b0745b98ed4c40a11002b5dc5d8fe924df3
+    commit: cc57319ae83e681837cd9eccbc7ac69222e7b001
   original:
-    hackage: rdf4h-3.1.1
-- completed:
-    hackage: hgal-2.0.0.2@sha256:13d58afd0668b9cb881c612eff8488a0e289edd4bbffa893df4beee60cfeb73b,653
-    pantry-tree:
-      size: 412
-      sha256: 265739e0c2c1313b96f8653b0bdb24cd5cc895e53d9afc940a34ab125c67e60e
-  original:
-    hackage: hgal-2.0.0.2@sha256:13d58afd0668b9cb881c612eff8488a0e289edd4bbffa893df4beee60cfeb73b,653
+    git: https://github.com/robstewart57/rdf4h.git
+    commit: cc57319ae83e681837cd9eccbc7ac69222e7b001
 snapshots:
 - completed:
-    size: 523454
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/2.yaml
-    sha256: 593deeb8366fd69b9e3b7611759ecee87d0d76c08c2ba363b38b7fb119e9fc22
-  original: lts-14.2
+    size: 531237
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/16/0.yaml
+    sha256: 210e15b7043e2783115afe16b0d54914b1611cdaa73f3ca3ca7f8e0847ff54e5
+  original: lts-16.0
