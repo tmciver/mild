@@ -12,6 +12,13 @@ packages:
   original:
     hackage: hsexif-0.6.1.8
 - completed:
+    hackage: hgal-2.0.0.2@sha256:13d58afd0668b9cb881c612eff8488a0e289edd4bbffa893df4beee60cfeb73b,653
+    pantry-tree:
+      size: 412
+      sha256: 265739e0c2c1313b96f8653b0bdb24cd5cc895e53d9afc940a34ab125c67e60e
+  original:
+    hackage: hgal-2.0.0.2@sha256:13d58afd0668b9cb881c612eff8488a0e289edd4bbffa893df4beee60cfeb73b,653
+- completed:
     name: rdf4h
     version: 4.0.1
     git: https://github.com/robstewart57/rdf4h.git

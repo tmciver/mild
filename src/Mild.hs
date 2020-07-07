@@ -8,6 +8,7 @@ import           Data.List (intercalate)
 import           Data.Map as Map
 import           Data.Maybe (catMaybes)
 import           Data.RDF
+import           Data.RDF.Namespace (mkUri, schema)
 import           Data.Set as Set
 import qualified Data.Text as T
 import           Graphics.HsExif
@@ -17,15 +18,6 @@ newtype ExifData = ExifData (Map.Map ExifTag ExifValue)
 
 instance Show ExifData where
   show (ExifData edm) = intercalate "\n" $ show <$> Map.toList edm
-
-rdfPrefix :: T.Text
-rdfPrefix = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-
-schemaPrefix :: T.Text
-schemaPrefix = "http://schema.org/"
-
-mkPrefixedNode :: T.Text -> T.Text -> Node
-mkPrefixedNode prefix term = (unode (T.concat [prefix, term]))
 
 data ExifError = TagDescriptionNotFound ExifTag
                | NoExifDataFound
@@ -43,9 +35,9 @@ exifTagToGraph (tag, val) = do
       pm = PrefixMappings mempty
       nameNode = lnode (plainL (T.pack desc))
       valueNode = lnode (plainL (T.pack (show val)))
-      triples = [ triple bn (mkPrefixedNode rdfPrefix "type") (mkPrefixedNode schemaPrefix "PropertyValue")
-                , triple bn (mkPrefixedNode schemaPrefix "name") nameNode
-                , triple bn (mkPrefixedNode schemaPrefix "value") valueNode
+      triples = [ triple bn (unode "a") (unode (mkUri schema "PropertyValue"))
+                , triple bn (unode (mkUri schema "name")) nameNode
+                , triple bn (unode (mkUri schema "value")) valueNode
                 ]
       graph = mkRdf triples Nothing pm
   pure (bn, graph)
@@ -64,7 +56,7 @@ exifDataToGraph :: (Rdf a, MonadThrow m)
 exifDataToGraph imageNode (ExifData ed) = graph
   where exifProps = catMaybes $ exifTagToGraph <$> (Map.toList ed)
         g :: Rdf a => Node -> (Node, RDF a) -> RDF a -> RDF a
-        g imageNode (n, propGraph) imageGraph = let triples = (triplesOf imageGraph) <> (triplesOf propGraph) <> [triple imageNode (mkPrefixedNode schemaPrefix "hasProperty") n]
+        g imageNode (n, propGraph) imageGraph = let triples = (triplesOf imageGraph) <> (triplesOf propGraph) <> [triple imageNode (unode (mkUri schema "hasProperty")) n]
                                                     baseUrl' = baseUrl imageGraph
                                                     pm = prefixMappings imageGraph
                                                 in mkRdf triples baseUrl' pm
