@@ -27,6 +27,8 @@ dependencies:
 - text
 - errors
 - exceptions
+- uuid
+- network-uri
 
 library:
   source-dirs: src

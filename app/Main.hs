@@ -2,6 +2,7 @@
 
 module Main where
 
+import           Control.Exception (SomeException)
 import           Data.Bifunctor (first)
 import           Data.Map as Map
 import           Data.RDF
@@ -14,13 +15,7 @@ main :: IO ()
 main = do
   args <- getArgs
   let filePath = head args
-      imageNode = unode $ T.pack filePath
-  eitherExif <- parseFileExif filePath
-  let eitherExifData = removeMakerNote . ExifData <$> eitherExif
-      eitherGraph :: Either String (RDF TList)
-      eitherGraph = do
-        exifData <- eitherExifData
-        first show (exifDataToGraph imageNode exifData)
+  eitherGraph <- mkImageGraph filePath :: IO (Either SomeException (RDF TList))
   case eitherGraph of
     Left e -> putStrLn $ show e
     Right graph -> let mappings = PrefixMappings $ Map.fromList [("schema", "http://schema.org/")]
